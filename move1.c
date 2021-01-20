@@ -340,72 +340,81 @@ int choosemove2(t_player* You,int nbCities, t_track Tracks[nbCities],t_move *mov
 
 	int i=0;
 	int p=0;
-	for(i=0;i<nbCities;i++)
-	{
-		if((You->cards[Tracks[i].color1]==Tracks[i].length || You->cards[Tracks[i].color2]==Tracks[i].length || You->cards[MULTICOLOR]==Tracks[i].length) && Tracks[i].taken==0 )
-		{
-			printf("DECISIONCLAIMROUTE\n");
-			move->type=1;
-			move->claimRoute.city1=Tracks[i].city1;
-			move->claimRoute.city2=Tracks[i].city2;
-			
+	int u=0;
+	for(int i=0;i<5;i++)
+						{
+							
+							if(faceUp[i]==Tracks[u].color1 && Tracks[u].taken==0)
+							{
+								move->type=3;
+								move->drawCard.card=faceUp[i];
+								i=5;
+							}
+							if(Tracks[u].taken==1)
+							{
+								u++;
+							}
+							else if(faceUp[i]!=Tracks[u].color1 && Tracks[u].taken==0){
+								p++;
+							
+							
+								
+							}
+						}
+						if(p>4){
+							move->type=2;
+						}
+						
+						if(You->cards[Tracks[u].color1]==Tracks[u].length && Tracks[u].taken==0)
+					    			{
+					    				move->type=1;
+					    				if(Tracks[u].color1==9)
+					    				{
+					    					for (int i = 0; i <9 ; ++i)
+					    					{
+					    						if(You->cards[i]==Tracks[u].length)
+					    							move->claimRoute.color=i;
+					    					}
+					    				}
+					    				else{
+					    					move->claimRoute.color=Tracks[u].color1;
 
-			You->nbWagons=You->nbWagons-Tracks[i].length;//on descend le nombre de wagons du player
-			Tracks[i].taken=1;
+					    				}
+					    				
+					    				
+					    				You->cards[Tracks[u].color1]-=Tracks[u].length;
+					    				move->claimRoute.city1=Tracks[u].city1;
+					    				move->claimRoute.city2=Tracks[u].city2;
+					    				move->claimRoute.nbLocomotives=0;
+					    				You->nbCards=You->nbCards-Tracks[u].length;
+					    				You->nbWagons=You->nbWagons-Tracks[u].length;
+					    				Tracks[u].taken=1;
 
-			G[Tracks[i].city1][Tracks[i].city2]=0;//on met distance G à 0 car on prend la route
-
-			if(You->cards[Tracks[i].color1]==Tracks[i].length)
-				{
-					move->claimRoute.color=Tracks[i].color1;
-					You->cards[Tracks[i].color1]-=Tracks[i].length;//on diminue le nombre de cartes de la couleur qu'on utilise
-					move->claimRoute.nbLocomotives=0;
-				}
-			else if (You->cards[Tracks[i].color2]==Tracks[i].length)
-				{
-					    move->claimRoute.color=Tracks[i].color2;
-					    You->cards[Tracks[i].color2]-=Tracks[i].length;
-					    move->claimRoute.nbLocomotives=0;
-				}
-			else
-				{
-					move->claimRoute.color=MULTICOLOR;
-					You->cards[MULTICOLOR]-=Tracks[i].length;
-					move->claimRoute.nbLocomotives=Tracks[i].length;
-				}
-
-		}
-
-		else
-		{
-			printf("DECISIONDRAWCARD\n");
-			for(int j=0;j<5;j++)
-				{
-					if(faceUp[j]==Tracks[i].color1)
-					{
-					//si une des couleurs du Track existe dans le deck faceUp
-					   move->type=3;
-					   move->drawCard.card=Tracks[i].color1;
-					   j=5;
-					}
-					if(faceUp[j]==Tracks[i].color2)
-					   {
-					    printf("movetype3\n");
-					    move->type=3;
-					    move->drawCard.card=Tracks[i].color2;
-					    j=5;
-					    					
-					   }
-					else
-					{
-					 printf("movetype2\n");
-					 move->type=2;
-					 
-					    					
-					}
-				}
-		}
-	}
+					    			}
+					    			else if (You->cards[Tracks[u].color2]==Tracks[u].length && Tracks[u].taken==0)
+					    			{
+					    				move->type=1;
+					    				move->claimRoute.color=Tracks[u].color2;
+					    				You->cards[Tracks[u].color2]-=Tracks[u].length;
+					    				move->claimRoute.city1=Tracks[u].city1;
+					    				move->claimRoute.city2=Tracks[u].city2;
+					    				move->claimRoute.nbLocomotives=0;
+					    				You->nbWagons=You->nbWagons-Tracks[u].length;
+					    				You->nbCards=You->nbCards-Tracks[u].length;
+					    				Tracks[u].taken=1;
+					    			}
+					    			else if(You->cards[MULTICOLOR]==Tracks[u].length+1 && Tracks[u].taken==0)
+					    			{
+					    				move->type=1;
+					    				move->claimRoute.color=MULTICOLOR;
+					    				move->claimRoute.city1=Tracks[u].city1;
+					    				move->claimRoute.city2=Tracks[u].city2;
+					    				move->claimRoute.nbLocomotives=Tracks[u].length;
+					    				You->nbWagons=You->nbWagons-Tracks[u].length;
+					    				You->nbCards=You->nbCards-Tracks[u].length;
+					    				You->cards[MULTICOLOR]-=Tracks[u].length;
+					    				Tracks[u].taken=1;
+					    			}
 	return move->type;
 
 }
