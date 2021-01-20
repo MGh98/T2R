@@ -119,6 +119,7 @@ int distanceMini(int nbCities, int Visite[nbCities],int D[nbCities])
 void algorithme(int src,int nbCities, int dest, int G[nbCities][nbCities],int D[nbCities],int Prec[nbCities])
 {
 	int u=src;
+	int j=0;
 	int Visite[nbCities];
 	for(int i=0;i<nbCities;i++)
 	{
@@ -126,11 +127,13 @@ void algorithme(int src,int nbCities, int dest, int G[nbCities][nbCities],int D[
 		Visite[i]=0;
 	}
 	D[src]=0;
-
+	//Visite[src]=1;
 	while(u!=dest)
 	{
+		
 		u=distanceMini2(nbCities,D,Visite);
 		Visite[u]=1;
+		printf("u=%d\n", u);
 		for (int i = 0; i < nbCities; i++)
 		{
 			if(Visite[i]==0 && G[u][i]!=INT_MAX && D[u]+G[u][i]<D[i])
@@ -140,6 +143,7 @@ void algorithme(int src,int nbCities, int dest, int G[nbCities][nbCities],int D[
 				Prec[i]=u;
 			}
 		}
+		
 	}
 }
 
@@ -206,8 +210,9 @@ void displayway2(int src,int dest,int nbCities,int Prec[nbCities],t_track Tracks
 	int i=0;
 	while(v!=src)
 	{
-		v=Prec[v];
 		Tracks[i].city1=v;
+		v=Prec[v];
+		//Tracks[i].city1=v;
 		Tracks[i].city2=Prec[v];
 
 	}
@@ -271,6 +276,7 @@ void trackstotake2(int nbCities,t_track Tracks[nbCities],int dest,int src,int nb
 		}
 	}
 }
+//obsolete
 void trackstotake(int Villes[15], t_track* AllTracks,t_track* Tracks,int dest,int src,int nbTracks)
 {
 	int i=0;
@@ -403,8 +409,27 @@ int choosemove2(t_player* You,int nbCities, t_track Tracks[nbCities],t_move *mov
 	return move->type;
 
 }
-					    				
 
+int findlong(int nbTracks,t_track AllTracks[nbTracks])// to find the longest tracks
+{
+	int u=0;
+	for (int i = 0; i < nbTracks; ++i)
+	{
+		if(AllTracks[i].length==6 && AllTracks[i].taken==0)
+		{
+			u=i;
+
+		}
+	}
+	return u;
+}
+
+
+
+
+
+					    				
+//fonction obsolète
 int choosemove(t_player* You,t_track* Tracks,t_move* move,int nbCities,int G[nbCities][nbCities],t_color faceUp[5])
 {
 	if((You->cards[Tracks->color1]==Tracks->length || You->cards[Tracks->color2]==Tracks->length || You->cards[MULTICOLOR]==Tracks->length) && Tracks->taken==0)

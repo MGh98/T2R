@@ -40,4 +40,6 @@ void trackstotake(int Villes[15], t_track* AllTracks,t_track* Tracks,int dest,in
 void initplayer(t_player* You,t_color* cards);
 
 int choosemove(t_player* You,t_track* Tracks,t_move* move,int nbCities,int G[nbCities][nbCities],t_color faceUp[5]);
+
+int findlong(int nbTracks,t_track AllTracks[nbTracks]);
 #endif //T2R_TEST_MOVE_H

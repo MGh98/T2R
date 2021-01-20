@@ -53,10 +53,12 @@ int main() {
 	fillArray(nbCities,G,arrayTracks,AllTracks);//fill array G for algoDjisktra and Alltracks of the game
 	initplayer(&You,ourCards);//Initialization of the informations of our player
 
-	t_track Tracks[15]; //List of the tracks to take to complete the objective
+	t_track Tracks[nbCities]; //List of the tracks to take to complete the objective
+
 	You.nbObjectives=0;
 
-	int u=1;
+	int u;
+	int p=0;
 	/* game loop */
 	do{
 		/* display map */
@@ -97,29 +99,43 @@ int main() {
 			{
 					
 					//we use nbObjectives, (we decrease the nbObjectives when one is taken)
+					
 
-					algorithme(obj[You.nbObjectives-1].city1,nbCities,obj[You.nbObjectives-1].city2,G,D,Prec);//Djisktra's Algorithm
-					printf("Fait\n");
+
+					//algorithme(obj[You.nbObjectives-1].city1,nbCities,obj[You.nbObjectives-1].city2,G,D,Prec);//Djisktra's Algorithm
+				
 					
 					//We store the tracks we need to fulfill the objectives
-					displayway2(obj[You.nbObjectives-1].city1,obj[You.nbObjectives-1].city2,nbCities,Prec,Tracks);
+					//displayway2(obj[You.nbObjectives-1].city1,obj[You.nbObjectives-1].city2,nbCities,Prec,Tracks);
 
 					//we retrieve the infos about the tracks (length, color, taken)
-					trackstotake2(nbCities,Tracks,obj[You.nbObjectives-1].city2,obj[You.nbObjectives-1].city1,nbTracks,AllTracks);
+					//trackstotake2(nbCities,Tracks,obj[You.nbObjectives-1].city2,obj[You.nbObjectives-1].city1,nbTracks,AllTracks);
 
 					//we use the infos about the tracks to choose between drawCard, drawBlindcard or claimRoute
-					move.type=choosemove2(&You,nbCities,Tracks,&move,G,faceUp);
+					//move.type=choosemove2(&You,nbCities,Tracks,&move,G,faceUp);
+					
 			}
 
 					    	
-					    							    		
-					    		
 
+								    		
+		
+			u=findlong(nbTracks,AllTracks);
+
+			//for(int i=0;i<nbTracks;i++)
+			//{
+				printf("AllTracks[%d].city1= %d \n",u,AllTracks[u].city1);
+				printf("AllTracks[%d].city2= %d \n",u,AllTracks[u].city2);
+				printf("AllTracks[%d].color1= %d \n",u,AllTracks[u].color1 );
+				printf("AllTracks[%d].color2= %d \n",u,AllTracks[u].city1);
+				printf("AllTracks[%d].length= %d \n",u, AllTracks[u].length);
+				printf("AllTracks[%d].taken= %d \n",u,AllTracks[u].taken);
+			//}
 
 			if(move.type==1 && choose==0)//Claimroute
 			{
-				//tentative d'implémentation uniquement du choosemove
-				/*for(int i=0;i<5;i++)
+				//tentative d'implémentation uniquement du choosemove pour trouver les plus longues routes
+				for(int i=0;i<5;i++)
 						{
 							if(faceUp[i]==AllTracks[u].color1 && AllTracks[u].taken==0)
 							{
@@ -131,8 +147,9 @@ int main() {
 							{
 								u++;
 							}
-							else{
+							else if(i==4){
 								move.type=2;
+							
 								
 							}
 						}
@@ -140,11 +157,28 @@ int main() {
 						if(You.cards[AllTracks[u].color1]==AllTracks[u].length && AllTracks[u].taken==0)
 					    			{
 					    				move.type=1;
-					    				move.claimRoute.color=AllTracks[u].color1;
+					    				if(AllTracks[u].color1==9)
+					    				{
+					    					for (int i = 0; i < 9; ++i)
+					    					{
+					    						if(You.cards[i]==AllTracks[u].length)
+					    							move.claimRoute.color=i;
+					    					}
+					    				}
+					    				else{
+					    					move.claimRoute.color=AllTracks[u].color1;
+
+					    				}
+					    				
 					    				You.cards[AllTracks[u].color1]-=AllTracks[u].length;
+
 					    				move.claimRoute.city1=AllTracks[u].city1;
+
+
 					    				move.claimRoute.city2=AllTracks[u].city2;
+
 					    				move.claimRoute.nbLocomotives=0;
+
 					    				You.nbWagons=You.nbWagons-AllTracks[u].length;
 					    				You.nbCards=You.nbCards-AllTracks[u].length;
 
@@ -169,13 +203,15 @@ int main() {
 					    				move.type=1;
 					    				move.claimRoute.color=MULTICOLOR;
 					    				You.cards[MULTICOLOR]-=AllTracks[u].length;
+
 					    				move.claimRoute.city1=AllTracks[u].city1;
 					    				move.claimRoute.city2=AllTracks[u].city2;
-					    				move.claimRoute.nbLocomotives=0;
+					    				move.claimRoute.nbLocomotives=AllTracks[u].length;
+
 					    				You.nbCards=You.nbCards-AllTracks[u].length;
 					    				You.nbWagons=You.nbWagons-AllTracks[u].length;
 					    				AllTracks[u].taken=1;
-					    			}*/
+					    			}
 						
 
 				choose=1;
@@ -185,7 +221,7 @@ int main() {
 				You.cards[move.drawBlindCard.card]++; //we update our cards deck
 				You.nbCards++;
 
-				/*for(int i=0;i<5;i++)
+				for(int i=0;i<5;i++)
 						{
 							
 							if(faceUp[i]==AllTracks[u].color1 && AllTracks[u].taken==0)
@@ -198,16 +234,34 @@ int main() {
 							{
 								u++;
 							}
-							else{
-								move.type=2;
+							else if(faceUp[i]!=AllTracks[u].color1 && AllTracks[u].taken==0){
+								p++;
+							
+							
 								
 							}
-						}*/
+						}
+						if(p>4){
+							move.type=2;
+						}
 						
-						/*if(You.cards[AllTracks[u].color1]==AllTracks[u].length && AllTracks[u].taken==0)
+						if(You.cards[AllTracks[u].color1]==AllTracks[u].length && AllTracks[u].taken==0)
 					    			{
 					    				move.type=1;
-					    				move.claimRoute.color=AllTracks[u].color1;
+					    				if(AllTracks[u].color1==9)
+					    				{
+					    					for (int i = 0; i <9 ; ++i)
+					    					{
+					    						if(You.cards[i]==AllTracks[u].length)
+					    							move.claimRoute.color=i;
+					    					}
+					    				}
+					    				else{
+					    					move.claimRoute.color=AllTracks[u].color1;
+
+					    				}
+					    				
+					    				
 					    				You.cards[AllTracks[u].color1]-=AllTracks[u].length;
 					    				move.claimRoute.city1=AllTracks[u].city1;
 					    				move.claimRoute.city2=AllTracks[u].city2;
@@ -235,12 +289,12 @@ int main() {
 					    				move.claimRoute.color=MULTICOLOR;
 					    				move.claimRoute.city1=AllTracks[u].city1;
 					    				move.claimRoute.city2=AllTracks[u].city2;
-					    				move.claimRoute.nbLocomotives=0;
+					    				move.claimRoute.nbLocomotives=AllTracks[u].length;
 					    				You.nbWagons=You.nbWagons-AllTracks[u].length;
 					    				You.nbCards=You.nbCards-AllTracks[u].length;
 					    				You.cards[MULTICOLOR]-=AllTracks[u].length;
 					    				AllTracks[u].taken=1;
-					    			}*/
+					    			}
 						
 
 				choose=1;
@@ -254,7 +308,7 @@ int main() {
 						for(int i=0;i<5;i++)
 						{
 							faceUp[i]=move.drawCard.faceUp[i];//we update the actual faceUp cards
-							/*if(faceUp[i]==AllTracks[u].color1 && AllTracks[u].taken==0)
+							if(faceUp[i]==AllTracks[u].color1 && AllTracks[u].taken==0)
 							{
 								move.type=3;
 								move.drawCard.card=faceUp[i];
@@ -264,16 +318,34 @@ int main() {
 							{
 								u++;
 							}
-							else{
-								move.type=2;
+							else if(faceUp[i]!=AllTracks[u].color1 && AllTracks[u].taken==0){
+								p++;
+							
+							
 								
-							}*/
+							}
+						}
+						if(p>4){
+							move.type=2;
 						}
 						
-						/*if(You.cards[AllTracks[u].color1]==AllTracks[u].length && AllTracks[u].taken==0)
+						if(You.cards[AllTracks[u].color1]==AllTracks[u].length && AllTracks[u].taken==0)
 					    			{
 					    				move.type=1;
-					    				move.claimRoute.color=AllTracks[u].color1;
+					    				if(AllTracks[u].color1==9)
+					    				{
+					    					for (int i = 0; i < 9; ++i)
+					    					{
+					    						if(You.cards[i]==AllTracks[u].length)
+					    							move.claimRoute.color=i;
+					    					}
+					    				}
+					    				else{
+					    					move.claimRoute.color=AllTracks[u].color1;
+
+					    				}
+					    				
+					    				
 					    				move.claimRoute.city1=AllTracks[u].city1;
 					    				move.claimRoute.city2=AllTracks[u].city2;
 					    				move.claimRoute.nbLocomotives=0;
@@ -303,7 +375,7 @@ int main() {
 					    				You.nbWagons=You.nbWagons-AllTracks[u].length;
 					    				You.cards[MULTICOLOR]-=AllTracks[u].length;
 					    				AllTracks[u].taken=1;
-					    			}*/
+					    			}
 						
 
 						choose=1;
@@ -329,23 +401,29 @@ int main() {
 						obj[i].score=move.drawObjectives.objectives[i].score;
 
 						}
-						/*for(int i=0;i<5;i++)
+						for(int i=0;i<5;i++)
 						{
 							if(faceUp[i]==AllTracks[u].color1 && AllTracks[u].taken==0)
 							{
 								move.type=3;
 								move.drawCard.card=faceUp[i];
+								i=5;
 							}
 							if(AllTracks[u].taken==1)
 							{
 								u++;
 							}
-							else{
-								move.type=2;
+							else if(faceUp[i]!=AllTracks[u].color1 && AllTracks[u].taken==0){
+								p++;
+							
+							
 								
 							}
-						}*/
-						move.type=2;
+						}
+						if(p>4){
+							move.type=2;
+						}
+						
 
 						You.nbObjectives=3;
 						choose=1;
